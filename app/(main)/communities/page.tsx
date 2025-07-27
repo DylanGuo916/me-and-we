@@ -1,6 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import React from "react";
 
 interface Community {
   id: string;
@@ -15,7 +14,6 @@ interface Community {
 }
 
 async function fetchCommunities(): Promise<Community[]> {
-  // 兼容本地和部署环境
   const baseUrl =
     process.env.NEXT_PUBLIC_API_URL ||
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
@@ -26,8 +24,9 @@ async function fetchCommunities(): Promise<Community[]> {
 
 export default async function CommunitiesPage() {
   const communities = await fetchCommunities();
+  
   return (
-    <div className="max-w-3xl mx-auto py-8">
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Communities</h1>
       <div className="space-y-6">
         {communities.length === 0 ? (

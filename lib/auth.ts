@@ -1,69 +1,52 @@
-import type { NextAuthOptions } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
+import "server-only";
+import { betterAuth } from 'better-auth'
+import { prismaAdapter } from 'better-auth/adapters/prisma'
+import { nextCookies } from 'better-auth/next-js'
+import { prisma } from './prisma'
 
-export const authOptions: NextAuthOptions = {
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
-  ],
-  callbacks: {
-    async session({ session, token }) {
-      console.log('Session callback:', { session, token });
-      if (session.user && token.sub) {
-        // 使用类型断言确保id属性可以被添加
-        (session.user as { id?: string }).id = token.sub;
-      }
-      return session;
-    },
-    async jwt({ token, user }) {
-      console.log('JWT callback:', { token, user });
-      if (user) {
-        token.sub = user.id;
-      }
-      return token;
-    },
-    async signIn({ user, account, profile }) {
-      console.log('SignIn callback:', { user, account, profile });
-      try {
-        // 尝试检查是否有错误信息
-        if (account && account.error) {
-          console.error('SignIn error from provider:', account.error);
-        }
-        return true;
-      } catch (error) {
-        console.error('Error in signIn callback:', error);
-        return false;
-      }
-    },
-    async redirect({ url, baseUrl }) {
-      console.log('Redirect callback:', { url, baseUrl });
-      return url.startsWith(baseUrl) ? url : baseUrl;
+export const auth = betterAuth({
+  plugins: [nextCookies()],
+  database: prismaAdapter(prisma, {
+    provider: 'postgresql',
+  }),
+  
+  // MVP 阶段：启用邮箱密码登录（后续可以禁用）
+  emailAndPassword: {
+    enabled: true,
+    disableSignUp: false, // 允许注册
+  },
+  
+  // 会话配置
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 24, // 1 day
+  },
+  
+  // 安全配置
+  advanced: {
+    useSecureCookies: process.env.NODE_ENV === "production",
+  },
+  
+  // 信任的源（开发环境）
+  trustedOrigins: process.env.NODE_ENV === "development" 
+    ? ['http://localhost:3000', 'http://localhost:3001'] 
+    : [],
+  
+  // socialProviders: {
+    // google: {
+    //   clientId: process.env.GOOGLE_CLIENT_ID as string,
+    //   clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    // },
+    // github: {
+    //   clientId: process.env.GITHUB_CLIENT_ID as string,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    // },
+  // },
+  
+  // 错误处理
+  fetchOptions: {
+    onError(e: any) {
+      console.error('Better Auth error:', e);
     },
   },
-  events: {
-    signIn: (message) => {
-      console.log('SignIn event:', message);
-    },
-    signOut: (message) => {
-      console.log('SignOut event:', message);
-    },
-    createUser: (message) => {
-      console.log('CreateUser event:', message);
-    },
-    updateUser: (message) => {
-      console.log('UpdateUser event:', message);
-    },
-    linkAccount: (message) => {
-      console.log('LinkAccount event:', message);
-    },
-    session: (message) => {
-      console.log('Session event:', message);
-    },
-  },
-  debug: true,
-  pages: {
-    signIn: "/auth/signin",
-  },
-}
+})

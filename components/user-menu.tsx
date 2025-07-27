@@ -1,6 +1,6 @@
 "use client"
 
-import { useSession, signOut } from "next-auth/react"
+import { useSession, signOut } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ export default function UserMenu() {
         <Link href="/auth/signin">
           <Button variant="ghost">Login</Button>
         </Link>
-        <Link href="/auth/signin">
+        <Link href="/auth/signup">
           <Button className="bg-black text-white hover:bg-gray-800">Sign up</Button>
         </Link>
       </div>

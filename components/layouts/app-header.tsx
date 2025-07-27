@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Search, Menu, PanelLeftClose, PanelRightClose, PanelRight } from "lucide-react";
+import {
+  Search,
+  Menu,
+  PanelLeftClose,
+  PanelRightClose,
+  PanelRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UserMenu from "@/components/user-menu";
@@ -13,10 +19,10 @@ interface AppHeaderProps {
   rightSidebarOpen: boolean;
 }
 
-export function AppHeader({ 
-  onToggleSidebar, 
-  onToggleRightSidebar, 
-  rightSidebarOpen 
+export function AppHeader({
+  onToggleSidebar,
+  onToggleRightSidebar,
+  rightSidebarOpen,
 }: AppHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -41,22 +47,14 @@ export function AppHeader({
             <Menu className="w-5 h-5" />
           </Button>
 
-          {/* Desktop Sidebar Toggle */}
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggleSidebar}
-            className="hidden lg:flex"
-          >
-            <PanelLeftClose className="w-5 h-5" />
-          </Button>
-
           {/* Brand Logo */}
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+              <span className="text-white font-bold text-sm">m&W</span>
             </div>
-            <span className="text-2xl font-light text-green-500 hidden sm:block">steemit</span>
+            <span className="text-2xl font-light text-green-500 hidden sm:block">
+              m&W DAO
+            </span>
           </div>
         </div>
 
@@ -96,4 +94,4 @@ export function AppHeader({
       </div>
     </header>
   );
-} 
+}

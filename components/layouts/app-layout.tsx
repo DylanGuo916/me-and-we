@@ -8,16 +8,18 @@ import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AppLayoutProps {
   children: React.ReactNode;
+  showSidebar?: boolean;
   showRightSidebar?: boolean;
   rightSidebarContent?: React.ReactNode;
 }
 
-export function AppLayout({ 
-  children, 
+export function AppLayout({
+  children,
+  showSidebar = true,
   showRightSidebar = true,
-  rightSidebarContent 
+  rightSidebarContent,
 }: AppLayoutProps) {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(showSidebar);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(showRightSidebar);
   const isMobile = useIsMobile();
 
@@ -25,40 +27,44 @@ export function AppLayout({
     if (isMobile) {
       setSidebarOpen(false);
       setRightSidebarOpen(false);
+    } else {
+      setSidebarOpen(showSidebar);
+      setRightSidebarOpen(showRightSidebar);
     }
-  }, [isMobile]);
+  }, [isMobile, showSidebar, showRightSidebar]);
 
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
   const toggleRightSidebar = () => setRightSidebarOpen(!rightSidebarOpen);
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Left Sidebar */}
-      <AppSidebar 
-        isOpen={sidebarOpen} 
-        onToggle={toggleSidebar}
-        isMobile={isMobile}
-      />
-
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <AppHeader 
-          onToggleSidebar={toggleSidebar}
-          onToggleRightSidebar={toggleRightSidebar}
+        <AppHeader
+          onToggleSidebar={showSidebar ? toggleSidebar : undefined}
+          onToggleRightSidebar={
+            showRightSidebar ? toggleRightSidebar : undefined
+          }
           rightSidebarOpen={rightSidebarOpen}
         />
 
         {/* Content */}
         <div className="flex-1 flex overflow-hidden">
+          {/* Left Sidebar */}
+          {showSidebar && (
+            <AppSidebar
+              isOpen={sidebarOpen}
+              onToggle={toggleSidebar}
+              isMobile={isMobile}
+            />
+          )}
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto">
-            {children}
-          </main>
+          <main className="flex-1 overflow-y-auto">{children}</main>
 
           {/* Right Sidebar */}
           {showRightSidebar && (
-            <AppRightSidebar 
+            <AppRightSidebar
               isOpen={rightSidebarOpen}
               onToggle={toggleRightSidebar}
               isMobile={isMobile}
@@ -70,4 +76,4 @@ export function AppLayout({
       </div>
     </div>
   );
-} 
+}

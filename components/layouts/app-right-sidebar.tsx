@@ -23,7 +23,7 @@ function DefaultRightSidebarContent() {
   ];
 
   const trendingCommunities = [
-    "SteemitCryptoAcademy",
+    "m&W DAOCryptoAcademy",
     "Newcomers' Community",
     "আমার বাংলা ব্লগ",
     "Korea • 한국 • KR • KO",
@@ -31,7 +31,7 @@ function DefaultRightSidebarContent() {
     "STEEM CN/中文",
     "WORLD OF XPILAR",
     "AVLE 일상",
-    "Comunidad Latina"
+    "Comunidad Latina",
   ];
 
   return (
@@ -43,9 +43,16 @@ function DefaultRightSidebarContent() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="p-3 bg-blue-50 rounded-lg">
-            <h4 className="font-medium text-blue-900">Steemit Challenge Season 25 - Week 6</h4>
-            <p className="text-sm text-blue-700 mt-1">Join the latest challenge and earn rewards!</p>
-            <Button variant="link" className="p-0 h-auto text-blue-600 hover:text-blue-800">
+            <h4 className="font-medium text-blue-900">
+              m&W DAO Challenge Season 25 - Week 6
+            </h4>
+            <p className="text-sm text-blue-700 mt-1">
+              Join the latest challenge and earn rewards!
+            </p>
+            <Button
+              variant="link"
+              className="p-0 h-auto text-blue-600 hover:text-blue-800"
+            >
               Learn More
             </Button>
           </div>
@@ -58,10 +65,16 @@ function DefaultRightSidebarContent() {
           <CardTitle className="text-lg font-semibold">Useful Links</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
-          <Button variant="link" className="p-0 h-auto justify-start text-blue-600 hover:text-blue-800">
+          <Button
+            variant="link"
+            className="p-0 h-auto justify-start text-blue-600 hover:text-blue-800"
+          >
             Newcomers Guide
           </Button>
-          <Button variant="link" className="p-0 h-auto justify-start text-blue-600 hover:text-blue-800">
+          <Button
+            variant="link"
+            className="p-0 h-auto justify-start text-blue-600 hover:text-blue-800"
+          >
             Latest Updates from @dip.team
           </Button>
         </CardContent>
@@ -70,7 +83,9 @@ function DefaultRightSidebarContent() {
       {/* Trending Communities */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold">Trending Communities</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            Trending Communities
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {trendingCommunities.map((community, index) => (
@@ -87,13 +102,17 @@ function DefaultRightSidebarContent() {
       {/* Coin Marketplace */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-semibold">Coin Marketplace</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            Coin Marketplace
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {cryptoData.map((crypto) => (
             <div key={crypto.name} className="space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium text-gray-700">{crypto.name}</span>
+                <span className="text-sm font-medium text-gray-700">
+                  {crypto.name}
+                </span>
                 <span className="text-sm text-gray-600">{crypto.price}</span>
               </div>
               <div className="h-16 bg-gray-50 rounded flex items-center justify-center">
@@ -102,13 +121,23 @@ function DefaultRightSidebarContent() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2"
-                    points={`0,30 50,${20 + Math.random() * 20} 100,${15 + Math.random() * 20} 150,${10 + Math.random() * 20} 200,${5 + Math.random() * 20}`}
+                    points={`0,30 50,${20 + Math.random() * 20} 100,${
+                      15 + Math.random() * 20
+                    } 150,${10 + Math.random() * 20} 200,${
+                      5 + Math.random() * 20
+                    }`}
                   />
                 </svg>
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-500">{crypto.name}</span>
-                <span className={crypto.change.startsWith("+") ? "text-green-500" : "text-red-500"}>
+                <span
+                  className={
+                    crypto.change.startsWith("+")
+                      ? "text-green-500"
+                      : "text-red-500"
+                  }
+                >
                   {crypto.change}
                 </span>
               </div>
@@ -120,11 +149,11 @@ function DefaultRightSidebarContent() {
   );
 }
 
-export function AppRightSidebar({ 
-  children, 
-  isOpen, 
-  onToggle, 
-  isMobile 
+export function AppRightSidebar({
+  children,
+  isOpen,
+  onToggle,
+  isMobile,
 }: AppRightSidebarProps) {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -133,19 +162,19 @@ export function AppRightSidebar({
       setShowScrollTop(window.scrollY > 200);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   return (
     <>
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onToggle}
         />
@@ -155,7 +184,7 @@ export function AppRightSidebar({
       <aside
         className={cn(
           "bg-white border-l border-gray-200 transition-all duration-300 z-50",
-          isMobile 
+          isMobile
             ? "fixed inset-y-0 right-0 transform transition-transform duration-300 ease-in-out"
             : "relative",
           isMobile && !isOpen && "translate-x-full",
@@ -186,4 +215,4 @@ export function AppRightSidebar({
       </aside>
     </>
   );
-} 
+}

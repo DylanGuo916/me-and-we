@@ -7,9 +7,8 @@ import Providers from "@/components/providers/session-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Steemit Clone",
+  title: "me and We news",
   description: "A social media platform built with Next.js",
-    generator: 'v0.dev'
 }
 
 export default function RootLayout({

@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
-import { 
-  Home, 
-  Users, 
-  User, 
-  Wallet, 
-  Settings, 
+import {
+  Home,
+  Users,
+  User,
+  Wallet,
+  Settings,
   Compass,
   FileText,
   UserPlus,
   Bell,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -53,13 +53,13 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
   useEffect(() => {
     if (isMobile && isOpen) {
       // 移动端侧边栏打开时，添加遮罩
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
 
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isMobile, isOpen]);
 
@@ -72,8 +72,8 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
         <div
           className={cn(
             "flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors cursor-pointer",
-            isActive 
-              ? "bg-green-100 text-green-700 border-l-4 border-green-500" 
+            isActive
+              ? "bg-green-100 text-green-700 border-l-4 border-green-500"
               : "text-gray-700 hover:bg-gray-100 hover:text-green-600"
           )}
         >
@@ -95,7 +95,7 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
     <>
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={onToggle}
         />
@@ -105,7 +105,7 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
       <aside
         className={cn(
           "bg-white border-r border-gray-200 transition-all duration-300 z-50",
-          isMobile 
+          isMobile
             ? "fixed inset-y-0 left-0 transform transition-transform duration-300 ease-in-out"
             : "relative",
           isMobile && !isOpen && "-translate-x-full",
@@ -115,15 +115,6 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            {!collapsed && (
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">S</span>
-                </div>
-                <span className="text-xl font-light text-green-500">steemit</span>
-              </div>
-            )}
-            
             {!isMobile && (
               <Button
                 variant="ghost"
@@ -131,7 +122,11 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
                 onClick={() => setCollapsed(!collapsed)}
                 className="p-1"
               >
-                {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+                {collapsed ? (
+                  <ChevronRight className="w-4 h-4" />
+                ) : (
+                  <ChevronLeft className="w-4 h-4" />
+                )}
               </Button>
             )}
           </div>
@@ -167,4 +162,4 @@ export function AppSidebar({ isOpen, onToggle, isMobile }: AppSidebarProps) {
       </aside>
     </>
   );
-} 
+}

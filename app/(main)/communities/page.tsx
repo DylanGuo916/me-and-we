@@ -1,4 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 
 interface Community {
@@ -27,7 +29,15 @@ export default async function CommunitiesPage() {
   
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Communities</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Communities</h1>
+        <Link href="/create">
+          <Button className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2">
+            <Plus className="w-4 h-4" />
+            <span>Create a Community</span>
+          </Button>
+        </Link>
+      </div>
       <div className="space-y-6">
         {communities.length === 0 ? (
           <div className="text-gray-500 text-center">No communities found.</div>

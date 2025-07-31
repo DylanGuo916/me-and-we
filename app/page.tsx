@@ -22,10 +22,9 @@ export interface Post {
 
 async function fetchPosts(): Promise<Post[]> {
   try {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || '';
-    const url = apiUrl ? `${apiUrl}/api/posts` : '/api/posts';
-    console.log('Fetching posts from:', url);
-    const response = await fetch(url);
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const response = await fetch(`${baseUrl}/api/posts`);
     if (!response.ok) {
       throw new Error('Failed to fetch posts');
     }

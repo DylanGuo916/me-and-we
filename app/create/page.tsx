@@ -24,20 +24,48 @@ export default function CreateCommunityPage() {
     setIsSubmitting(true);
     
     try {
-      // 这里添加创建社区的API调用逻辑
-      console.log("创建社区:", {
-        name,
-        description,
+      // 构建API请求URL
+    //   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
+    //     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const baseUrl = 'http://localhost:3000'
+      const response = await fetch(`${baseUrl}/api/communities`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 包含认证cookie
+        body: JSON.stringify({
+          name: name.trim(),
+          description: description.trim(),
+        }),
       });
-      
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // 处理特定的错误状态码
+        if (response.status === 401) {
+          alert("请先登录");
+          return;
+        }
+        
+        if (response.status === 409) {
+          alert("社区名称已存在");
+          return;
+        }
+        
+        throw new Error(errorData.error || `创建失败: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("社区创建成功:", result);
       
       // 创建成功后跳转到社区页面
       router.push("/communities");
     } catch (error) {
       console.error("创建失败:", error);
-      alert("创建失败，请重试");
+      const errorMessage = error instanceof Error ? error.message : "创建失败，请重试";
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

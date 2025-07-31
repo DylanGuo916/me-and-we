@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import UserMenu from "@/components/user-menu";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface AppHeaderProps {
   onToggleSidebar: () => void;
@@ -56,14 +57,14 @@ export function AppHeader({
           </Button>
 
           {/* Brand Logo */}
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity cursor-pointer">
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">m&W</span>
             </div>
             <span className="text-2xl font-light text-green-500 hidden sm:block">
               m&W
             </span>
-          </div>
+          </Link>
         </div>
 
         {/* Center Section - Search */}

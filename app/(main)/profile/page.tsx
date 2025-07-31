@@ -6,7 +6,9 @@ import { AppLayout } from "@/components/layouts/app-layout";
 import { User, Settings, Bell, Shield, HelpCircle } from "lucide-react";
 import { useUserProfile } from "@/hooks/use-user-profile";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AvatarUpload } from "@/components/avatar-upload";
 import Link from "next/link";
+import { useState } from "react";
 
 // 格式化日期的辅助函数
 function formatDate(date: Date) {
@@ -20,7 +22,14 @@ function formatDate(date: Date) {
 }
 
 export default function ProfilePage() {
-  const { profile, loading, error } = useUserProfile();
+  const { profile, loading, error, refetch } = useUserProfile();
+  const [localAvatar, setLocalAvatar] = useState<string | null>(null);
+
+  const handleAvatarUpdate = (newAvatar: string) => {
+    setLocalAvatar(newAvatar);
+    // 重新获取用户数据以更新页面
+    refetch();
+  };
 
   if (loading) {
     return (
@@ -83,17 +92,11 @@ export default function ProfilePage() {
           <Card className="mb-6">
             <CardContent className="p-6">
               <div className="flex items-center space-x-6">
-                <div className="w-24 h-24 bg-gray-300 rounded-full flex items-center justify-center">
-                  {profile.user.avatar ? (
-                    <img 
-                      src={profile.user.avatar} 
-                      alt={`${profile.user.name} avatar`}
-                      className="w-24 h-24 rounded-full object-cover"
-                    />
-                  ) : (
-                    <User className="w-12 h-12 text-gray-600" />
-                  )}
-                </div>
+                <AvatarUpload
+                  currentAvatar={localAvatar || profile.user.avatar}
+                  onAvatarUpdate={handleAvatarUpdate}
+                  size="md"
+                />
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold text-gray-900">{profile.user.name}</h1>
                   <p className="text-gray-600">@{profile.user.username}</p>

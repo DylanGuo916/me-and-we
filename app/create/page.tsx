@@ -25,9 +25,8 @@ export default function CreateCommunityPage() {
     
     try {
       // 构建API请求URL
-    //   const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
-    //     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
-    const baseUrl = 'http://localhost:3000'
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
       const response = await fetch(`${baseUrl}/api/communities`, {
         method: 'POST',
         headers: {

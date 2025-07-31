@@ -60,10 +60,10 @@ export default function SignUpPage() {
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
-            <span className="text-2xl font-light text-green-500">m&W DAO</span>
+            <span className="text-2xl font-light text-green-500">m&W</span>
           </div>
           <CardTitle className="text-2xl">Create your account</CardTitle>
-          <CardDescription>Join the m&W DAO community</CardDescription>
+          <CardDescription>Join the m&W community</CardDescription>
         </CardHeader>
         <CardContent>
           {/* Google Sign Up Button */}

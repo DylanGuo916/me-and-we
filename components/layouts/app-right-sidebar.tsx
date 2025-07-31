@@ -23,7 +23,7 @@ function DefaultRightSidebarContent() {
   ];
 
   const trendingCommunities = [
-    "m&W DAOCryptoAcademy",
+    "m&W CryptoAcademy",
     "Newcomers' Community",
     "আমার বাংলা ব্লগ",
     "Korea • 한국 • KR • KO",
@@ -44,7 +44,7 @@ function DefaultRightSidebarContent() {
         <CardContent className="space-y-3">
           <div className="p-3 bg-blue-50 rounded-lg">
             <h4 className="font-medium text-blue-900">
-              m&W DAO Challenge Season 25 - Week 6
+              m&W Challenge Season 25 - Week 6
             </h4>
             <p className="text-sm text-blue-700 mt-1">
               Join the latest challenge and earn rewards!

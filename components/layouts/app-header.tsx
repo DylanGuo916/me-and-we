@@ -53,7 +53,7 @@ export function AppHeader({
               <span className="text-white font-bold text-sm">m&W</span>
             </div>
             <span className="text-2xl font-light text-green-500 hidden sm:block">
-              m&W DAO
+              m&W
             </span>
           </div>
         </div>

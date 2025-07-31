@@ -43,10 +43,10 @@ export default function ProfilePage() {
                   <div className="space-y-4">
                     <div className="border-b border-gray-200 pb-4">
                       <h3 className="font-semibold text-gray-900">
-                        My First m&W DAO Post
+                        My First m&W Post
                       </h3>
                       <p className="text-gray-600 text-sm mt-1">
-                        This is my first post on m&W DAO. I'm excited to be part
+                        This is my first post on m&W. I'm excited to be part
                         of this amazing community...
                       </p>
                       <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
@@ -87,7 +87,7 @@ export default function ProfilePage() {
                 <CardContent>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm">#m&W DAO</span>
+                      <span className="text-sm">#m&W</span>
                       <span className="text-xs text-gray-500">Member</span>
                     </div>
                     <div className="flex items-center justify-between">

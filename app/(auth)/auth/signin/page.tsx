@@ -59,7 +59,7 @@ export default function SignInPage() {
             <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
-            <span className="text-2xl font-light text-green-500">m&W DAO</span>
+            <span className="text-2xl font-light text-green-500">m&W</span>
           </div>
           <CardTitle className="text-2xl">Welcome back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>

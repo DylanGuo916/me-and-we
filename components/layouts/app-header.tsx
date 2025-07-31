@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Search,
   Menu,
   PanelLeftClose,
   PanelRightClose,
   PanelRight,
+  Plus,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,11 +27,17 @@ export function AppHeader({
   rightSidebarOpen,
 }: AppHeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     // 实现搜索功能
     console.log("Searching for:", searchQuery);
+  };
+
+  const handlePost = () => {
+    // 导航到发表文章页面
+    router.push("/submit");
   };
 
   return (
@@ -86,6 +94,15 @@ export function AppHeader({
             ) : (
               <PanelRight className="w-5 h-5" />
             )}
+          </Button>
+
+          {/* Post Button */}
+          <Button
+            onClick={handlePost}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2"
+          >
+            <Plus className="w-4 h-4" />
+            <span className="hidden sm:inline">Post</span>
           </Button>
 
           {/* User Menu */}

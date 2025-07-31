@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Image, Hash, Send } from "lucide-react";
+import { ArrowLeft, Send, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useUserCommunities } from "@/hooks/use-user-communities";
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -19,13 +20,8 @@ export default function SubmitPage() {
   const [newTag, setNewTag] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const communities = [
-    { id: "tech", name: "Technology", description: "讨论技术相关话题" },
-    { id: "lifestyle", name: "Lifestyle", description: "生活方式和日常分享" },
-    { id: "news", name: "News", description: "新闻和时事讨论" },
-    { id: "entertainment", name: "Entertainment", description: "娱乐和休闲" },
-    { id: "sports", name: "Sports", description: "体育和运动" },
-  ];
+  // 使用真实的社区数据
+  const { communities, loading: communitiesLoading, error: communitiesError } = useUserCommunities();
 
   const handleAddTag = () => {
     if (newTag.trim() && !tags.includes(newTag.trim())) {
@@ -48,22 +44,55 @@ export default function SubmitPage() {
     setIsSubmitting(true);
     
     try {
-      // 这里添加提交文章的逻辑
-      console.log("提交文章:", {
-        title,
-        content,
-        community: selectedCommunity,
-        tags,
+      // 构建API请求URL
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+      
+      const response = await fetch(`${baseUrl}/api/posts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // 包含认证cookie
+        body: JSON.stringify({
+          title: title.trim(),
+          content: content.trim(),
+          communityId: selectedCommunity,
+          tags: tags,
+        }),
       });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        
+        // 处理特定的错误状态码
+        if (response.status === 401) {
+          alert("请先登录");
+          return;
+        }
+        
+        if (response.status === 403) {
+          alert("您不是该社区的成员，无法发布文章");
+          return;
+        }
+        
+        if (response.status === 404) {
+          alert("社区不存在");
+          return;
+        }
+        
+        throw new Error(errorData.error || `发布失败: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log("文章发布成功:", result);
       
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // 提交成功后跳转到首页
+      // 发布成功后跳转到首页
       router.push("/");
     } catch (error) {
-      console.error("提交失败:", error);
-      alert("提交失败，请重试");
+      console.error("发布失败:", error);
+      const errorMessage = error instanceof Error ? error.message : "发布失败，请重试";
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -89,27 +118,57 @@ export default function SubmitPage() {
 
       <div className="max-w-4xl mx-auto p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* 错误提示 */}
+          {communitiesError && (
+            <Alert variant="destructive">
+              <AlertDescription>{communitiesError}</AlertDescription>
+            </Alert>
+          )}
+
           {/* 社区选择 */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">选择社区</CardTitle>
             </CardHeader>
             <CardContent>
-              <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
-                <SelectTrigger>
-                  <SelectValue placeholder="选择一个社区" />
-                </SelectTrigger>
-                <SelectContent>
-                  {communities.map((community) => (
-                    <SelectItem key={community.id} value={community.id}>
-                      <div className="flex flex-col">
-                        <span className="font-medium">{community.name}</span>
-                        <span className="text-sm text-gray-500">{community.description}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              {communitiesLoading ? (
+                <div className="flex items-center space-x-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm text-gray-500">加载社区中...</span>
+                </div>
+              ) : communities.length === 0 ? (
+                <div className="text-center py-4">
+                  <p className="text-gray-500 mb-2">您还没有加入任何社区</p>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    onClick={() => router.push("/create")}
+                  >
+                    创建社区
+                  </Button>
+                </div>
+              ) : (
+                <Select value={selectedCommunity} onValueChange={setSelectedCommunity}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="选择一个社区" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {communities.map((community) => (
+                      <SelectItem key={community.id} value={community.id}>
+                        <div className="flex flex-col">
+                          <span className="font-medium">{community.name}</span>
+                          <span className="text-sm text-gray-500">
+                            {community.description || "暂无描述"}
+                          </span>
+                          <span className="text-xs text-gray-400">
+                            {community.role} • {community.memberCount} 成员 • {community.postCount} 文章
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
             </CardContent>
           </Card>
 
@@ -173,7 +232,6 @@ export default function SubmitPage() {
                     onClick={handleAddTag}
                     className="flex items-center space-x-2"
                   >
-                    <Hash className="w-4 h-4" />
                     <span>添加</span>
                   </Button>
                 </div>
@@ -181,15 +239,14 @@ export default function SubmitPage() {
                 {tags.length > 0 && (
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
-                      <Badge
+                      <div
                         key={tag}
-                        variant="secondary"
-                        className="flex items-center space-x-1 cursor-pointer hover:bg-gray-300"
+                        className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center space-x-1 cursor-pointer hover:bg-gray-200"
                         onClick={() => handleRemoveTag(tag)}
                       >
                         <span>#{tag}</span>
                         <span className="text-gray-500">×</span>
-                      </Badge>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -209,7 +266,7 @@ export default function SubmitPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedCommunity}
+              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedCommunity || communitiesLoading}
               className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2"
             >
               {isSubmitting ? (

@@ -4,8 +4,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { AppLayout } from "@/components/layouts/app-layout";
 import Image from "next/image";
 import { MessageCircle, Share2, ArrowUp, ArrowDown, Gift } from "lucide-react";
+import Link from "next/link";
 
-// 定义帖子类型
 export interface Post {
   id: string;
   title: string;
@@ -105,9 +105,11 @@ export default async function HomePage() {
                           <span>•</span>
                           <span>{formatDate(new Date(post.createdAt))}</span>
                         </div>
-                        <h2 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
-                          {post.title}
-                        </h2>
+                        <Link href={`/posts/${post.id}`}>
+                          <h2 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors">
+                            {post.title}
+                          </h2>
+                        </Link>
                         <p className="text-gray-600 text-sm mb-4">
                           {post.content.length > 150 ? `${post.content.substring(0, 150)}...` : post.content}
                         </p>

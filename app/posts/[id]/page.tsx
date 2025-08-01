@@ -71,7 +71,6 @@ export default async function PostPage({ params }: PostPageProps) {
 
   // 生成随机数据
   const upvotes = generateRandomNumber(1, 50);
-  const downvotes = generateRandomNumber(1, 20);
   const comments = generateRandomNumber(0, 30);
 
   return (
@@ -139,7 +138,6 @@ export default async function PostPage({ params }: PostPageProps) {
                       <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
                         <ArrowDown className="w-4 h-4" />
                       </Button>
-                      <span className="font-medium text-gray-700">{downvotes}</span>
                     </div>
                     
                     {/* 评论功能 */}

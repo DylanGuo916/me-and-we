@@ -84,7 +84,6 @@ export default async function HomePage() {
             posts.map((post) => {
               // 为每个帖子生成随机的点赞和点踩数
               const upvotes = generateRandomNumber(1, 50);
-              const downvotes = generateRandomNumber(1, 20);
               const comments = generateRandomNumber(0, 30);
               
               return (
@@ -136,7 +135,6 @@ export default async function HomePage() {
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
                               <ArrowDown className="w-4 h-4" />
                             </Button>
-                            <span className="font-medium text-gray-700">{downvotes}</span>
                           </div>
                           
                           {/* 评论功能 */}

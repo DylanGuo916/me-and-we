@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { AppLayout } from "@/components/layouts/app-layout";
+import { JoinCommunityButton } from "@/components/join-community-button";
 
 interface Community {
   id: string;
@@ -47,16 +48,24 @@ export default async function CommunitiesPage() {
             communities.map((c) => (
               <Card key={c.id} className="bg-white">
                 <CardContent className="p-6">
-                  <div className="flex flex-col gap-2">
-                    <Link href={`#`} className="text-lg font-semibold text-green-600 hover:underline">
-                      {c.name}
-                    </Link>
-                    <div className="text-gray-600 text-sm">{c.description || "No description."}</div>
-                    <div className="text-xs text-gray-400">
-                      {c.members.length} subscribers • {c.posts.length} posts
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 flex flex-col gap-2">
+                      <Link href={`#`} className="text-lg font-semibold text-green-600 hover:underline">
+                        {c.name}
+                      </Link>
+                      <div className="text-gray-600 text-sm">{c.description || "No description."}</div>
+                      <div className="text-xs text-gray-400">
+                        {c.members.length} subscribers • {c.posts.length} posts
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        admin: <span className="text-green-600">{c.owner.name}</span>
+                      </div>
                     </div>
-                    <div className="text-xs text-gray-400">
-                      admin: <span className="text-green-600">{c.owner.name}</span>
+                    <div className="ml-4 flex-shrink-0">
+                      <JoinCommunityButton 
+                        communityId={c.id} 
+                        communityName={c.name}
+                      />
                     </div>
                   </div>
                 </CardContent>

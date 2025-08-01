@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AppLayout } from "@/components/layouts/app-layout";
+import { JoinCommunityButton } from "@/components/join-community-button";
 import Image from "next/image";
 import { MessageCircle, Share2, ArrowUp, ArrowDown, Gift } from "lucide-react";
 import Link from "next/link";
@@ -87,7 +88,17 @@ export default async function HomePage() {
               const comments = generateRandomNumber(0, 30);
               
               return (
-                <Card key={post.id} className="bg-white">
+                <Card key={post.id} className="bg-white relative">
+                  {/* Join按钮 - 右上角 */}
+                  {post.community && (
+                    <div className="absolute top-4 right-4 z-10">
+                      <JoinCommunityButton
+                        communityId={post.community.id}
+                        communityName={post.community.name}
+                      />
+                    </div>
+                  )}
+                  
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
                       <Image

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/layouts/app-layout";
+import { JoinCommunityButton } from "@/components/join-community-button";
 import Image from "next/image";
 import { MessageCircle, Share2, ArrowUp, ArrowDown, Gift, ArrowLeft } from "lucide-react";
 import Link from "next/link";
@@ -87,7 +88,17 @@ export default async function PostPage({ params }: PostPageProps) {
         </div>
 
         {/* 文章内容 */}
-        <Card className="bg-white">
+        <Card className="bg-white relative">
+          {/* Join按钮 - 右上角 */}
+          {post.community && (
+            <div className="absolute top-4 right-4 z-10">
+              <JoinCommunityButton
+                communityId={post.community.id}
+                communityName={post.community.name}
+              />
+            </div>
+          )}
+          
           <CardContent className="p-6">
             <div className="flex items-start space-x-4">
               <Image
@@ -117,42 +128,54 @@ export default async function PostPage({ params }: PostPageProps) {
                 </div>
                 
                 {/* 交互功能按钮 */}
-                <div className="flex items-center space-x-6 text-sm text-gray-500 border-t pt-4">
-                  {/* 点赞/踩功能 */}
-                  <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                      <ArrowUp className="w-4 h-4" />
-                    </Button>
-                    <span className="font-medium text-gray-700">{upvotes}</span>
-                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                      <ArrowDown className="w-4 h-4" />
-                    </Button>
-                    <span className="font-medium text-gray-700">{downvotes}</span>
+                <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
+                  <div className="flex items-center space-x-6">
+                    {/* 点赞/踩功能 */}
+                    <div className="flex items-center space-x-1">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                      <span className="font-medium text-gray-700">{upvotes}</span>
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
+                        <ArrowDown className="w-4 h-4" />
+                      </Button>
+                      <span className="font-medium text-gray-700">{downvotes}</span>
+                    </div>
+                    
+                    {/* 评论功能 */}
+                    <div className="flex items-center space-x-1">
+                      <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
+                        <MessageCircle className="w-4 h-4 mr-1" />
+                        <span>{comments}</span>
+                      </Button>
+                    </div>
+                    
+                    {/* 打赏/奖励功能 */}
+                    <div className="flex items-center space-x-1">
+                      <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
+                        <Gift className="w-4 h-4 mr-1" />
+                        <span>奖励</span>
+                      </Button>
+                    </div>
+                    
+                    {/* 转发/分享功能 */}
+                    <div className="flex items-center space-x-1">
+                      <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
+                        <Share2 className="w-4 h-4 mr-1" />
+                        <span>共享</span>
+                      </Button>
+                    </div>
                   </div>
-                  
-                  {/* 评论功能 */}
-                  <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
-                      <MessageCircle className="w-4 h-4 mr-1" />
-                      <span>{comments}</span>
-                    </Button>
-                  </div>
-                  
-                  {/* 打赏/奖励功能 */}
-                  <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
-                      <Gift className="w-4 h-4 mr-1" />
-                      <span>奖励</span>
-                    </Button>
-                  </div>
-                  
-                  {/* 转发/分享功能 */}
-                  <div className="flex items-center space-x-1">
-                    <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
-                      <Share2 className="w-4 h-4 mr-1" />
-                      <span>共享</span>
-                    </Button>
-                  </div>
+
+                  {/* Join按钮 - 最右侧 */}
+                  {post.community && (
+                    <div className="flex items-center">
+                      <JoinCommunityButton
+                        communityId={post.community.id}
+                        communityName={post.community.name}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

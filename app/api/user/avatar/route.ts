@@ -1,6 +1,7 @@
 import { prisma } from '../../../../lib/prisma';
 import { auth } from '../../../../lib/auth';
 import { put, del } from "@vercel/blob";
+import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
@@ -14,30 +15,30 @@ export async function POST(request: Request) {
       });
     }
 
-    // 解析FormData
-    const formData = await request.formData();
-    const file = formData.get('avatar') as File;
+    // 从查询参数获取文件名
+    const { searchParams } = new URL(request.url);
+    const filename = searchParams.get('filename');
 
-    if (!file) {
-      return new Response(JSON.stringify({ error: 'No file provided' }), {
+    if (!filename) {
+      return new Response(JSON.stringify({ error: 'Filename is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 检查请求体是否存在
+    if (!request.body) {
+      return new Response(JSON.stringify({ error: 'No file content provided' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
 
     // 验证文件类型
-    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const fileExtension = filename.toLowerCase().split('.').pop();
+    if (!fileExtension || !allowedExtensions.includes(`.${fileExtension}`)) {
       return new Response(JSON.stringify({ error: 'Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    // 验证文件大小 (限制为5MB)
-    const maxSize = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSize) {
-      return new Response(JSON.stringify({ error: 'File too large. Maximum size is 5MB.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -50,25 +51,19 @@ export async function POST(request: Request) {
     });
 
     // 生成唯一的文件名
-    const fileExtension = file.name.split('.').pop() || 'jpg';
-    const fileName = `avatars/${session.user.id}-${Date.now()}.${fileExtension}`;
+    const uniqueFilename = `avatars/${session.user.id}-${Date.now()}.${fileExtension}`;
 
-    // 将文件转换为Buffer
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
-    // 上传到Vercel Blob
-    const { url } = await put(fileName, buffer, { 
+    // 直接上传文件到Vercel Blob
+    const blob = await put(uniqueFilename, request.body, {
       access: 'public',
-      contentType: file.type
     });
 
     // 更新用户头像URL
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: { 
-        avatar: url,
-        image: url  // 同时更新image字段，这样better-auth的session就能正确显示头像
+        avatar: blob.url,
+        image: blob.url  // 同时更新image字段，这样better-auth的session就能正确显示头像
       },
       select: {
         id: true,
@@ -107,7 +102,7 @@ export async function POST(request: Request) {
       }
     }
 
-    return Response.json({
+    return NextResponse.json({
       success: true,
       avatar: updatedUser.avatar,
       message: 'Avatar updated successfully'

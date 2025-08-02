@@ -12,16 +12,13 @@ export function useAvatarUpload(): UseAvatarUploadReturn {
     try {
       setUploading(true);
 
-      const formData = new FormData();
-      formData.append('avatar', file);
-
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
         (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
       
-      const response = await fetch(`${baseUrl}/api/user/avatar`, {
+      const response = await fetch(`${baseUrl}/api/user/avatar?filename=${encodeURIComponent(file.name)}`, {
         method: 'POST',
         credentials: 'include',
-        body: formData,
+        body: file, // 直接发送文件对象
       });
 
       const data = await response.json();

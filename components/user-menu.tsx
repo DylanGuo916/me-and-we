@@ -13,9 +13,10 @@ import Image from "next/image"
 import Link from "next/link"
 
 export default function UserMenu() {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
 
-  if (status === "loading") {
+  // 如果session为undefined，说明还在加载中
+  if (session === undefined) {
     return <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
   }
 
@@ -38,10 +39,15 @@ export default function UserMenu() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Image
             className="rounded-full"
-            src={session.user?.image || "/placeholder.svg?height=32&width=32"}
+            src={session.user?.image || "/placeholder-user.jpg"}
             alt={session.user?.name || "User"}
             width={32}
             height={32}
+            onError={(e) => {
+              // 如果用户头像加载失败，使用占位符
+              const target = e.target as HTMLImageElement;
+              target.src = "/placeholder-user.jpg";
+            }}
           />
         </Button>
       </DropdownMenuTrigger>
@@ -69,7 +75,7 @@ export default function UserMenu() {
           className="cursor-pointer"
           onSelect={(event) => {
             event.preventDefault()
-            signOut({ callbackUrl: "/" })
+            signOut()
           }}
         >
           Sign out

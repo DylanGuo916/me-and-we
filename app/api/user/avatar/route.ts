@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     // 获取用户当前头像URL
     const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { avatar: true },
+      select: { avatar: true, image: true },
     });
 
     // 生成唯一的文件名
@@ -66,12 +66,16 @@ export async function POST(request: Request) {
     // 更新用户头像URL
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
-      data: { avatar: url },
+      data: { 
+        avatar: url,
+        image: url  // 同时更新image字段，这样better-auth的session就能正确显示头像
+      },
       select: {
         id: true,
         name: true,
         email: true,
         avatar: true,
+        image: true,
       },
     });
 
@@ -87,6 +91,19 @@ export async function POST(request: Request) {
       } catch (deleteError) {
         console.warn('Failed to delete old avatar:', deleteError);
         // 不阻止整个操作，只是记录警告
+      }
+    }
+
+    // 如果image字段也有旧的头像URL，也尝试删除
+    if (currentUser?.image && currentUser.image.includes('blob.vercel-storage.com') && currentUser.image !== currentUser.avatar) {
+      try {
+        const urlParts = currentUser.image.split('/');
+        const blobName = urlParts[urlParts.length - 1];
+        if (blobName) {
+          await del(blobName);
+        }
+      } catch (deleteError) {
+        console.warn('Failed to delete old image:', deleteError);
       }
     }
 

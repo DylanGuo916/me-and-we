@@ -35,10 +35,10 @@ interface SidebarItem {
 
 const sidebarItems: SidebarItem[] = [
   { icon: Compass, label: "Explore", href: "/" },
-  { icon: FileText, label: "All Posts", href: "/posts" },
+  // { icon: FileText, label: "All Posts", href: "/posts" },
   { icon: Users, label: "Communities", href: "/communities" },
-  { icon: UserPlus, label: "My Friends", href: "/friends" },
-  { icon: Bell, label: "My Subscriptions", href: "/subscriptions" },
+  // { icon: UserPlus, label: "My Friends", href: "/friends" },
+  // { icon: Bell, label: "My Subscriptions", href: "/subscriptions" },
   { icon: User, label: "My Profile", href: "/profile" },
   { icon: Wallet, label: "My Wallet", href: "/wallet" },
   { icon: Settings, label: "Settings", href: "/settings" },

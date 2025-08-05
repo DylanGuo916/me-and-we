@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
     // 解析请求体
     const body = await request.json();
-    const { title, content, communityId, tags } = body;
+    const { title, content, originalAuthor, originalLink, communityId, tags } = body;
 
     // 验证输入数据
     if (!title || typeof title !== 'string' || title.trim().length === 0) {
@@ -63,6 +63,37 @@ export async function POST(request: Request) {
 
     if (content.trim().length > 10000) {
       return new Response(JSON.stringify({ error: '文章内容不能超过10000个字符' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!originalAuthor || typeof originalAuthor !== 'string' || originalAuthor.trim().length === 0) {
+      return new Response(JSON.stringify({ error: '原作者不能为空' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (originalAuthor.trim().length > 100) {
+      return new Response(JSON.stringify({ error: '原作者不能超过100个字符' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!originalLink || typeof originalLink !== 'string' || originalLink.trim().length === 0) {
+      return new Response(JSON.stringify({ error: '原文链接不能为空' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
+
+    // 验证URL格式
+    try {
+      new URL(originalLink.trim());
+    } catch {
+      return new Response(JSON.stringify({ error: '原文链接格式不正确' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
@@ -107,11 +138,38 @@ export async function POST(request: Request) {
       });
     }
 
+    // 生成slug（基于标题）
+    const generateSlug = (title: string) => {
+      return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+    };
+
+    const baseSlug = generateSlug(title.trim());
+    let slug = baseSlug;
+    let counter = 1;
+
+    // 检查slug是否已存在，如果存在则添加数字后缀
+    while (true) {
+      const existingPost = await prisma.post.findUnique({
+        where: { slug },
+      });
+      if (!existingPost) break;
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
+
     // 创建文章
     const post = await prisma.post.create({
       data: {
         title: title.trim(),
         content: content.trim(),
+        originalAuthor: originalAuthor.trim(),
+        originalLink: originalLink.trim(),
+        slug: slug,
         authorId: session.user.id,
         communityId: communityId,
       },

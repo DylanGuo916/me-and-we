@@ -15,6 +15,8 @@ export default function SubmitPage() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [originalAuthor, setOriginalAuthor] = useState("");
+  const [originalLink, setOriginalLink] = useState("");
   const [selectedCommunity, setSelectedCommunity] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
@@ -36,7 +38,7 @@ export default function SubmitPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim() || !selectedCommunity) {
+    if (!title.trim() || !content.trim() || !selectedCommunity || !originalAuthor.trim() || !originalLink.trim()) {
       alert("请填写所有必填字段");
       return;
     }
@@ -57,6 +59,8 @@ export default function SubmitPage() {
         body: JSON.stringify({
           title: title.trim(),
           content: content.trim(),
+          originalAuthor: originalAuthor.trim(),
+          originalLink: originalLink.trim(),
           communityId: selectedCommunity,
           tags: tags,
         }),
@@ -192,6 +196,47 @@ export default function SubmitPage() {
             </CardContent>
           </Card>
 
+          {/* 原作者 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">原作者 *</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Input
+                type="text"
+                placeholder="输入原作者姓名或机构..."
+                value={originalAuthor}
+                onChange={(e) => setOriginalAuthor(e.target.value)}
+                className="text-lg"
+                maxLength={100}
+                required
+              />
+              <div className="text-sm text-gray-500 mt-2">
+                {originalAuthor.length}/100 字符
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 原文链接 */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">原文链接 *</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Input
+                type="url"
+                placeholder="输入原文链接..."
+                value={originalLink}
+                onChange={(e) => setOriginalLink(e.target.value)}
+                className="text-lg"
+                required
+              />
+              <div className="text-sm text-gray-500 mt-2">
+                必填字段，用于引用原文出处
+              </div>
+            </CardContent>
+          </Card>
+
           {/* 文章内容 */}
           <Card>
             <CardHeader>
@@ -266,7 +311,7 @@ export default function SubmitPage() {
             </Button>
             <Button
               type="submit"
-              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedCommunity || communitiesLoading}
+              disabled={isSubmitting || !title.trim() || !content.trim() || !selectedCommunity || !originalAuthor.trim() || !originalLink.trim() || communitiesLoading}
               className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2"
             >
               {isSubmitting ? (

@@ -33,6 +33,8 @@ model Post {
   authorId    String
   communityId String?
   createdAt   DateTime   @default(now())
+  originalAuthor String?
+  originalLink   String?
   slug        String?    @unique
   author      User       @relation(fields: [authorId], references: [id])
   community   Community? @relation(fields: [communityId], references: [id])

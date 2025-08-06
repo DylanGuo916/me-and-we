@@ -108,10 +108,10 @@ export default async function HomePage() {
                         alt={`${post.author.name} avatar`}
                         width={40}
                         height={40}
-                        className="rounded-full"
+                        className="rounded-full flex-shrink-0"
                       />
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 text-sm text-gray-500 mb-2">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center space-x-2 text-sm text-gray-500 mb-2 flex-wrap">
                           <span className="font-medium text-gray-700">{post.author.name}</span>
                           <span>in</span>
                           <span className="text-blue-500">#{post.community?.name || 'general'}</span>
@@ -119,16 +119,16 @@ export default async function HomePage() {
                           <span>{formatDate(new Date(post.createdAt))}</span>
                         </div>
                         <Link href={`/posts/${post.id}`}>
-                          <h2 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors">
+                          <h2 className="text-lg font-semibold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer transition-colors break-words">
                             {post.title}
                           </h2>
                         </Link>
-                        <p className="text-gray-600 text-sm mb-4">
+                        <p className="text-gray-600 text-sm mb-4 break-words">
                           {post.content.length > 150 ? `${post.content.substring(0, 150)}...` : post.content}
                         </p>
                         
                         {/* 交互功能按钮 */}
-                        <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <div className="flex items-center space-x-6 text-sm text-gray-500 flex-wrap">
                           {/* 点赞/踩功能 */}
                           <VoteButtons
                             postId={post.id}
@@ -145,12 +145,12 @@ export default async function HomePage() {
                           </div>
                           
                           {/* 打赏/奖励功能 */}
-                          <div className="flex items-center space-x-1">
+                          {/* <div className="flex items-center space-x-1">
                             <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
                               <Gift className="w-4 h-4 mr-1" />
                               <span>奖励</span>
                             </Button>
-                          </div>
+                          </div> */}
                           
                           {/* 转发/分享功能 */}
                           <SharePost

@@ -5,7 +5,8 @@ import { AppLayout } from "@/components/layouts/app-layout";
 import { JoinCommunityButton } from "@/components/join-community-button";
 import { VoteButtons } from "@/components/vote-buttons";
 import Image from "next/image";
-import { MessageCircle, Share2, Gift } from "lucide-react";
+import { MessageCircle, Gift } from "lucide-react";
+import { SharePost } from "@/components/share-post";
 import Link from "next/link";
 
 export interface Post {
@@ -152,12 +153,13 @@ export default async function HomePage() {
                           </div>
                           
                           {/* 转发/分享功能 */}
-                          <div className="flex items-center space-x-1">
-                            <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
-                              <Share2 className="w-4 h-4 mr-1" />
-                              <span>共享</span>
-                            </Button>
-                          </div>
+                          <SharePost
+                            postId={post.id}
+                            title={post.title}
+                            content={post.content}
+                            authorName={post.author.name}
+                            communityName={post.community?.name}
+                          />
                         </div>
                       </div>
                     </div>

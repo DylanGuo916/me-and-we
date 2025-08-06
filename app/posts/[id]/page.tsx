@@ -3,8 +3,9 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/layouts/app-layout";
 import { JoinCommunityButton } from "@/components/join-community-button";
+import { VoteButtons } from "@/components/vote-buttons";
 import Image from "next/image";
-import { MessageCircle, Share2, ArrowUp, ArrowDown, Gift, ArrowLeft } from "lucide-react";
+import { MessageCircle, Share2, Gift, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 interface Post {
@@ -12,6 +13,8 @@ interface Post {
   title: string;
   content: string;
   createdAt: Date;
+  score: number;
+  userVote?: "UP" | "DOWN" | null;
   author: {
     id: string;
     name: string;
@@ -69,8 +72,7 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-  // 生成随机数据
-  const upvotes = generateRandomNumber(1, 50);
+  // 生成随机评论数（暂时，后续可以添加真实的评论计数）
   const comments = generateRandomNumber(0, 30);
 
   return (
@@ -130,15 +132,11 @@ export default async function PostPage({ params }: PostPageProps) {
                 <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4">
                   <div className="flex items-center space-x-6">
                     {/* 点赞/踩功能 */}
-                    <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                        <ArrowUp className="w-4 h-4" />
-                      </Button>
-                      <span className="font-medium text-gray-700">{upvotes}</span>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0 hover:bg-gray-100">
-                        <ArrowDown className="w-4 h-4" />
-                      </Button>
-                    </div>
+                    <VoteButtons
+                      postId={post.id}
+                      initialScore={post.score}
+                      initialUserVote={post.userVote}
+                    />
                     
                     {/* 评论功能 */}
                     <div className="flex items-center space-x-1">

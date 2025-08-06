@@ -1,19 +1,34 @@
 import { prisma } from '../../../lib/prisma';
 import { auth } from '../../../lib/auth';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const session = await auth.api.getSession({ headers: request.headers });
+    
     const posts = await prisma.post.findMany({
       include: {
         author: true,
-        community: true
+        community: true,
+        votes: session?.user?.id ? {
+          where: { 
+            userId: session.user.id,
+            voteType: { not: "CANCELLED" } // 排除取消的投票
+          },
+        } : false,
       },
       orderBy: {
         createdAt: 'desc'
       },
       take: 10
     });
-    return Response.json(posts);
+
+    // 为每个帖子添加用户投票状态
+    const postsWithVoteStatus = posts.map(post => ({
+      ...post,
+      userVote: post.votes?.[0]?.voteType || null,
+    }));
+
+    return Response.json(postsWithVoteStatus);
   } catch (error) {
     console.error('Error fetching posts:', error);
     return new Response(JSON.stringify({ error: 'Failed to fetch posts' }), {

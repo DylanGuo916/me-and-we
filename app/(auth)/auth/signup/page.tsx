@@ -18,6 +18,7 @@ export default function SignUpPage() {
     name: "",
     email: "",
     password: "",
+    inviteCode: "",
   })
   const router = useRouter()
 
@@ -26,11 +27,39 @@ export default function SignUpPage() {
     setLoading(true)
 
     try {
+      // 验证邀请码
+      const validateResponse = await fetch("/api/invite-codes/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: formData.inviteCode }),
+      })
+
+      if (!validateResponse.ok) {
+        const errorData = await validateResponse.json()
+        toast.error(errorData.error || "Invite code validation failed")
+        return // 停止注册流程，但不抛出错误
+      }
+
+      // 使用邀请码
+      const useResponse = await fetch("/api/invite-codes/use", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: formData.inviteCode }),
+      })
+
+      if (!useResponse.ok) {
+        const errorData = await useResponse.json()
+        toast.error(errorData.error || "Invite code usage failed")
+        return // 停止注册流程，但不抛出错误
+      }
+
+      // 创建用户账户
       await authClient.signUp.email({
         name: formData.name,
         email: formData.email,
         password: formData.password,
       })
+      
       toast.success("Account created successfully! Please check your email to verify your account.")
       router.push("/auth/signin")
     } catch (error: any) {
@@ -67,7 +96,7 @@ export default function SignUpPage() {
         </CardHeader>
         <CardContent>
           {/* Google Sign Up Button */}
-          <Button
+          {/* <Button
             type="button"
             variant="outline"
             className="w-full mb-4"
@@ -102,7 +131,7 @@ export default function SignUpPage() {
                 <span>Continue with Google</span>
               </div>
             )}
-          </Button>
+          </Button> */}
 
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
@@ -146,6 +175,18 @@ export default function SignUpPage() {
                 placeholder="Create a password"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                required
+                disabled={loading}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="inviteCode">Invite Code</Label>
+              <Input
+                id="inviteCode"
+                type="text"
+                placeholder="Enter your invite code"
+                value={formData.inviteCode}
+                onChange={(e) => setFormData({ ...formData, inviteCode: e.target.value })}
                 required
                 disabled={loading}
               />

@@ -128,3 +128,13 @@ enum VoteType {
   DOWN
   CANCELLED
 }
+
+model InviteCode {
+  id          String    @id @default(uuid())
+  code        String    @unique
+  maxUses     Int       @default(1)
+  usedCount   Int       @default(0)
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime  @default(now())
+}

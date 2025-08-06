@@ -1,6 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { AppLayout } from "@/components/layouts/app-layout";
 import { JoinCommunityButton } from "@/components/join-community-button";
 import { VoteButtons } from "@/components/vote-buttons";
@@ -16,6 +22,8 @@ export interface Post {
   createdAt: Date;
   score: number;
   userVote?: "UP" | "DOWN" | null;
+  originalAuthor?: string | null;
+  originalLink?: string | null;
   author: {
     id: string;
     name: string;
@@ -34,31 +42,34 @@ function generateRandomNumber(min: number, max: number): number {
 
 async function fetchPosts(): Promise<Post[]> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
     const response = await fetch(`${baseUrl}/api/posts`);
     if (!response.ok) {
-      throw new Error('Failed to fetch posts');
+      throw new Error("Failed to fetch posts");
     }
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error("Error fetching posts:", error);
     return [];
   }
 }
 
 export default async function HomePage() {
   const posts = await fetchPosts();
-  
+
   // 格式化日期的辅助函数
   const formatDate = (date: Date) => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'today';
-    if (diffDays === 1) return 'yesterday';
+
+    if (diffDays === 0) return "today";
+    if (diffDays === 1) return "yesterday";
     return `${diffDays} days ago`;
   };
 
@@ -88,7 +99,7 @@ export default async function HomePage() {
             posts.map((post) => {
               // 生成随机评论数（暂时，后续可以添加真实的评论计数）
               const comments = generateRandomNumber(0, 30);
-              
+
               return (
                 <Card key={post.id} className="bg-white relative">
                   {/* Join按钮 - 右上角 */}
@@ -100,21 +111,25 @@ export default async function HomePage() {
                       />
                     </div>
                   )}
-                  
+
                   <CardContent className="p-6">
                     <div className="flex items-start space-x-4">
-                      <Image
-                        src={post.author.avatar || "/placeholder-user.jpg"}
-                        alt={`${post.author.name} avatar`}
-                        width={40}
-                        height={40}
-                        className="rounded-full flex-shrink-0"
-                      />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center space-x-2 text-sm text-gray-500 mb-2 flex-wrap">
-                          <span className="font-medium text-gray-700">{post.author.name}</span>
+                          <Image
+                            src={post.author.avatar || "/placeholder-user.jpg"}
+                            alt={`${post.author.name} avatar`}
+                            width={40}
+                            height={40}
+                            className="rounded-full flex-shrink-0"
+                          />
+                          <span className="font-medium text-gray-700">
+                            {post.author.name}
+                          </span>
                           <span>in</span>
-                          <span className="text-blue-500">#{post.community?.name || 'general'}</span>
+                          <span className="text-blue-500">
+                            #{post.community?.name || "general"}
+                          </span>
                           <span>•</span>
                           <span>{formatDate(new Date(post.createdAt))}</span>
                         </div>
@@ -124,9 +139,11 @@ export default async function HomePage() {
                           </h2>
                         </Link>
                         <p className="text-gray-600 text-sm mb-4 break-words">
-                          {post.content.length > 150 ? `${post.content.substring(0, 150)}...` : post.content}
+                          {post.content.length > 150
+                            ? `${post.content.substring(0, 150)}...`
+                            : post.content}
                         </p>
-                        
+
                         {/* 交互功能按钮 */}
                         <div className="flex items-center space-x-6 text-sm text-gray-500 flex-wrap">
                           {/* 点赞/踩功能 */}
@@ -135,15 +152,19 @@ export default async function HomePage() {
                             initialScore={post.score}
                             initialUserVote={post.userVote}
                           />
-                          
+
                           {/* 评论功能 */}
                           <div className="flex items-center space-x-1">
-                            <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 px-3 hover:bg-gray-100"
+                            >
                               <MessageCircle className="w-4 h-4 mr-1" />
                               <span>{comments}</span>
                             </Button>
                           </div>
-                          
+
                           {/* 打赏/奖励功能 */}
                           {/* <div className="flex items-center space-x-1">
                             <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
@@ -151,7 +172,7 @@ export default async function HomePage() {
                               <span>奖励</span>
                             </Button>
                           </div> */}
-                          
+
                           {/* 转发/分享功能 */}
                           <SharePost
                             postId={post.id}

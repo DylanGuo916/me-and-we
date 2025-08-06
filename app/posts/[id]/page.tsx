@@ -16,6 +16,8 @@ interface Post {
   createdAt: Date;
   score: number;
   userVote?: "UP" | "DOWN" | null;
+  originalAuthor?: string | null;
+  originalLink?: string | null;
   author: {
     id: string;
     name: string;
@@ -29,15 +31,18 @@ interface Post {
 
 async function fetchPost(id: string): Promise<Post | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_API_URL || 
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000');
+    const baseUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000");
     const response = await fetch(`${baseUrl}/api/posts/${id}`);
     if (!response.ok) {
       return null;
     }
     return response.json();
   } catch (error) {
-    console.error('Error fetching post:', error);
+    console.error("Error fetching post:", error);
     return null;
   }
 }
@@ -52,9 +57,9 @@ function formatDate(date: Date) {
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) return 'today';
-  if (diffDays === 1) return 'yesterday';
+
+  if (diffDays === 0) return "today";
+  if (diffDays === 1) return "yesterday";
   return `${diffDays} days ago`;
 }
 
@@ -66,9 +71,9 @@ interface PostPageProps {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { id } = params;
-  
+
   const post = await fetchPost(id);
-  
+
   if (!post) {
     notFound();
   }
@@ -100,35 +105,66 @@ export default async function PostPage({ params }: PostPageProps) {
               />
             </div>
           )}
-          
+
           <CardContent className="p-6">
             <div className="flex items-start space-x-4">
-              <Image
-                src={post.author.avatar || "/placeholder-user.jpg"}
-                alt={`${post.author.name} avatar`}
-                width={40}
-                height={40}
-                className="rounded-full flex-shrink-0"
-              />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 text-sm text-gray-500 mb-2 flex-wrap">
-                  <span className="font-medium text-gray-700">{post.author.name}</span>
+                  <Image
+                    src={post.author.avatar || "/placeholder-user.jpg"}
+                    alt={`${post.author.name} avatar`}
+                    width={40}
+                    height={40}
+                    className="rounded-full flex-shrink-0"
+                  />
+                  <span className="font-medium text-gray-700">
+                    {post.author.name}
+                  </span>
                   <span>in</span>
-                  <span className="text-blue-500">#{post.community?.name || 'general'}</span>
+                  <span className="text-blue-500">
+                    #{post.community?.name || "general"}
+                  </span>
                   <span>•</span>
                   <span>{formatDate(new Date(post.createdAt))}</span>
                 </div>
-                
+
                 <h1 className="text-2xl font-bold text-gray-900 mb-4 break-words">
                   {post.title}
                 </h1>
-                
+
+                {/* 原始作者和链接信息 */}
+                {(post.originalAuthor || post.originalLink) && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                    <div className="text-sm text-gray-600">
+                      {post.originalAuthor && (
+                        <div className="mb-1">
+                          <span className="font-medium">原始作者：</span>
+                          <span>{post.originalAuthor}</span>
+                        </div>
+                      )}
+                      {post.originalLink && (
+                        <div className="flex items-center">
+                          <span className="font-medium mr-2">原文链接：</span>
+                          <a
+                            href={post.originalLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 underline break-all"
+                          >
+                            {post.originalLink}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 <div className="prose max-w-none mb-6">
                   <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
                     {post.content}
                   </p>
                 </div>
-                
+
                 {/* 交互功能按钮 */}
                 <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4 flex-wrap gap-4">
                   <div className="flex items-center space-x-6 flex-wrap">
@@ -138,15 +174,19 @@ export default async function PostPage({ params }: PostPageProps) {
                       initialScore={post.score}
                       initialUserVote={post.userVote}
                     />
-                    
+
                     {/* 评论功能 */}
                     <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 px-3 hover:bg-gray-100"
+                      >
                         <MessageCircle className="w-4 h-4 mr-1" />
                         <span>{comments}</span>
                       </Button>
                     </div>
-                    
+
                     {/* 打赏/奖励功能 */}
                     {/* <div className="flex items-center space-x-1">
                       <Button variant="ghost" size="sm" className="h-8 px-3 hover:bg-gray-100">
@@ -154,7 +194,7 @@ export default async function PostPage({ params }: PostPageProps) {
                         <span>奖励</span>
                       </Button>
                     </div> */}
-                    
+
                     {/* 转发/分享功能 */}
                     <SharePost
                       postId={post.id}
@@ -192,4 +232,4 @@ export default async function PostPage({ params }: PostPageProps) {
       </div>
     </AppLayout>
   );
-} 
+}

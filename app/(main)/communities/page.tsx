@@ -50,7 +50,7 @@ export default async function CommunitiesPage() {
                 <CardContent className="p-6">
                   <div className="flex justify-between items-start">
                     <div className="flex-1 flex flex-col gap-2">
-                      <Link href={`#`} className="text-lg font-semibold text-green-600 hover:underline">
+                      <Link href={`/communities/${c.id}`} className="text-lg font-semibold text-green-600 hover:underline">
                         {c.name}
                       </Link>
                       <div className="text-gray-600 text-sm">{c.description || "No description."}</div>

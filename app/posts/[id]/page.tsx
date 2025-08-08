@@ -85,14 +85,14 @@ export default async function PostPage({ params }: PostPageProps) {
     <AppLayout showRightSidebar={true}>
       <div className="p-6">
         {/* 返回按钮 */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Link href="/">
             <Button variant="ghost" className="flex items-center space-x-2">
               <ArrowLeft className="w-4 h-4" />
               <span>返回首页</span>
             </Button>
           </Link>
-        </div>
+        </div> */}
 
         {/* 文章内容 */}
         <Card className="bg-white relative">

@@ -98,14 +98,14 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
     <AppLayout showRightSidebar={true}>
       <div className="p-6">
         {/* Back Button */}
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <Link href="/communities">
             <Button variant="ghost" className="flex items-center space-x-2">
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Communities</span>
             </Button>
           </Link>
-        </div>
+        </div> */}
 
         {/* Community Info Card */}
         <Card className="bg-white relative mb-6">
@@ -167,12 +167,12 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
                   communityId={community.id}
                   communityName={community.name}
                 />
-                <Link href="/submit">
+                {/* <Link href="/submit">
                   <Button className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2">
                     <Plus className="w-4 h-4" />
                     <span>Create Post</span>
                   </Button>
-                </Link>
+                </Link> */}
               </div>
             </div>
           </CardContent>

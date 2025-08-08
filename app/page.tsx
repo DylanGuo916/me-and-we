@@ -15,6 +15,8 @@ import { MessageCircle, Gift } from "lucide-react";
 import { SharePost } from "@/components/share-post";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic'
+
 export interface Post {
   id: string;
   title: string;

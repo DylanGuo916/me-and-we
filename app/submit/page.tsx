@@ -208,6 +208,7 @@ export default function SubmitPage() {
                     onUpdate={setContent}
                     placeholder="Share your thoughts and insights..."
                     minHeight={400}
+                    maxHeight={400}
                   />
                 </CardContent>
               </Card>

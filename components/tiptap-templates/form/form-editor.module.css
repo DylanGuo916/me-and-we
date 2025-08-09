@@ -1,0 +1,96 @@
+/* FormEditor 样式 */
+.formEditor {
+  position: relative;
+}
+
+/* 更强的文本选中样式 - 多层覆盖 */
+.formEditor ::selection {
+  background-color: #3b82f6 !important; /* 蓝色选中背景 */
+  color: white !important;
+}
+
+.formEditor ::-moz-selection {
+  background-color: #3b82f6 !important; /* Firefox 支持 */
+  color: white !important;
+}
+
+.formEditor * ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor * ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .ProseMirror ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .ProseMirror ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .ProseMirror * ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .ProseMirror * ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+/* 更深层的元素选择器 */
+.formEditor .ProseMirror p ::selection,
+.formEditor .ProseMirror div ::selection,
+.formEditor .ProseMirror span ::selection,
+.formEditor .ProseMirror h1 ::selection,
+.formEditor .ProseMirror h2 ::selection,
+.formEditor .ProseMirror h3 ::selection,
+.formEditor .ProseMirror strong ::selection,
+.formEditor .ProseMirror em ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .ProseMirror p ::-moz-selection,
+.formEditor .ProseMirror div ::-moz-selection,
+.formEditor .ProseMirror span ::-moz-selection,
+.formEditor .ProseMirror h1 ::-moz-selection,
+.formEditor .ProseMirror h2 ::-moz-selection,
+.formEditor .ProseMirror h3 ::-moz-selection,
+.formEditor .ProseMirror strong ::-moz-selection,
+.formEditor .ProseMirror em ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+/* 覆盖 prose 类的选中样式 */
+.formEditor .prose ::selection,
+.formEditor .prose-sm ::selection,
+.formEditor .prose-lg ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .prose ::-moz-selection,
+.formEditor .prose-sm ::-moz-selection,
+.formEditor .prose-lg ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+/* 全局重置，确保没有其他样式干扰 */
+.formEditor .prose * ::selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+.formEditor .prose * ::-moz-selection {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}

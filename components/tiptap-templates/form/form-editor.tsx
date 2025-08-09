@@ -15,6 +15,7 @@ import { Superscript } from "@tiptap/extension-superscript"
 
 // --- UI Primitives ---
 import { Button } from "@/components/tiptap-ui-primitive/button"
+import { Button as UIButton } from "@/components/ui/button"
 import {
   Toolbar,
   ToolbarGroup,
@@ -34,6 +35,10 @@ import { CodeBlockButton } from "@/components/tiptap-ui/code-block-button"
 import { MarkButton } from "@/components/tiptap-ui/mark-button"
 import { TextAlignButton } from "@/components/tiptap-ui/text-align-button"
 import { UndoRedoButton } from "@/components/tiptap-ui/undo-redo-button"
+import { LinkPopover } from "@/components/tiptap-ui/link-popover"
+import { KeyboardShortcutsHelp } from "./keyboard-shortcuts-help"
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"
+import { HelpCircle } from "lucide-react"
 
 // Import the styles
 import "@/components/tiptap-node/blockquote-node/blockquote-node.scss"
@@ -43,6 +48,7 @@ import "@/components/tiptap-node/list-node/list-node.scss"
 import "@/components/tiptap-node/image-node/image-node.scss"
 import "@/components/tiptap-node/heading-node/heading-node.scss"
 import "@/components/tiptap-node/paragraph-node/paragraph-node.scss"
+import styles from "./form-editor.module.css"
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024 // 5MB
 
@@ -78,13 +84,15 @@ interface FormEditorProps {
   onUpdate?: (content: string) => void
   placeholder?: string
   minHeight?: number
+  maxHeight?: number // 新增：最大高度，设置后将固定高度并允许滚动
 }
 
 export function FormEditor({ 
   content = "", 
   onUpdate, 
   placeholder = "Start writing your article...",
-  minHeight = 300
+  minHeight = 300,
+  maxHeight
 }: FormEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
@@ -96,7 +104,24 @@ export function FormEditor({
         autocapitalize: "off",
         "aria-label": "Article content editor",
         class: "form-editor prose prose-sm sm:prose lg:prose-lg mx-auto focus:outline-none",
-        style: `min-height: ${minHeight}px;`,
+        style: maxHeight 
+          ? `min-height: ${minHeight}px; max-height: ${maxHeight}px; overflow-y: auto;`
+          : `min-height: ${minHeight}px;`,
+        spellcheck: "false",
+      },
+      handleKeyDown: (view, event) => {
+        // 确保快捷键正常工作
+        const { key, ctrlKey, metaKey, shiftKey } = event;
+        const cmdKey = ctrlKey || metaKey;
+
+        // 全选 (Ctrl/Cmd + A)
+        if (cmdKey && key === 'a' && !shiftKey) {
+          // 让 TipTap 处理全选
+          return false;
+        }
+
+        // 其他快捷键也让编辑器处理
+        return false;
       },
     },
     extensions: [
@@ -105,6 +130,9 @@ export function FormEditor({
         link: {
           openOnClick: false,
           enableClickSelection: true,
+          HTMLAttributes: {
+            class: 'text-blue-600 underline hover:text-blue-800',
+          },
         },
       }),
       HorizontalRule,
@@ -146,38 +174,63 @@ export function FormEditor({
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">
-      <EditorContext.Provider value={{ editor }}>
-        <Toolbar className="border-b">
-          <ToolbarGroup>
-            <HeadingDropdownMenu />
-            <ToolbarSeparator />
-            <MarkButton type="bold" />
-            <MarkButton type="italic" />
-            <MarkButton type="strike" />
-            <ToolbarSeparator />
-            <ListDropdownMenu />
-            <ToolbarSeparator />
-            <TextAlignButton align="left" />
-            <TextAlignButton align="center" />
-            <TextAlignButton align="right" />
-            <ToolbarSeparator />
-            <BlockquoteButton />
-            <CodeBlockButton />
-            <ToolbarSeparator />
-            <ImageUploadButton />
-            <ToolbarSeparator />
-            <UndoRedoButton action="undo" />
-            <UndoRedoButton action="redo" />
-          </ToolbarGroup>
-        </Toolbar>
+    <>
+      <div 
+        className={`border rounded-lg overflow-hidden ${styles.formEditor}`}
+        style={maxHeight ? { height: `${maxHeight + 60}px`, display: 'flex', flexDirection: 'column' } : {}}
+      >
+        <EditorContext.Provider value={{ editor }}>
+          {/* 固定的工具栏 */}
+          <Toolbar className="border-b flex-shrink-0">
+            <ToolbarGroup>
+              <HeadingDropdownMenu />
+              <ToolbarSeparator />
+              <MarkButton type="bold" />
+              <MarkButton type="italic" />
+              <MarkButton type="strike" />
+              <ToolbarSeparator />
+              <LinkPopover />
+              <ToolbarSeparator />
+              <ListDropdownMenu />
+              <ToolbarSeparator />
+              <TextAlignButton align="left" />
+              <TextAlignButton align="center" />
+              <TextAlignButton align="right" />
+              <ToolbarSeparator />
+              <BlockquoteButton />
+              <CodeBlockButton />
+              <ToolbarSeparator />
+              <ImageUploadButton />
+              <ToolbarSeparator />
+              <UndoRedoButton action="undo" />
+              <UndoRedoButton action="redo" />
+              <ToolbarSeparator />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <UIButton variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <HelpCircle className="w-4 h-4" />
+                  </UIButton>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                  <KeyboardShortcutsHelp />
+                </DialogContent>
+              </Dialog>
+            </ToolbarGroup>
+          </Toolbar>
 
-        <EditorContent
-          editor={editor}
-          className="p-4"
-          placeholder={placeholder}
-        />
-      </EditorContext.Provider>
-    </div>
+          {/* 可滚动的编辑区域 */}
+          <div 
+            className={maxHeight ? "flex-1 overflow-y-auto" : ""}
+            style={maxHeight ? { maxHeight: `${maxHeight}px` } : {}}
+          >
+            <EditorContent
+              editor={editor}
+              className="p-4"
+              placeholder={placeholder}
+            />
+          </div>
+        </EditorContext.Provider>
+      </div>
+    </>
   )
 }

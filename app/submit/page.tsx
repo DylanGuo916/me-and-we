@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send, Loader2, FileText, Users, Hash, Building2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Send,
+  Loader2,
+  FileText,
+  Users,
+  Hash,
+  Building2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -148,8 +156,12 @@ export default function SubmitPage() {
 
         {/* Title Section */}
         <div className="max-w-6xl mx-auto px-4 mb-8 text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Submit Article</h1>
-          <p className="text-gray-600">Share interesting content with your community</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+            Submit Article
+          </h1>
+          <p className="text-gray-600">
+            Share interesting content with your community
+          </p>
         </div>
 
         {/* Error Alert */}
@@ -194,25 +206,6 @@ export default function SubmitPage() {
                 </CardContent>
               </Card>
 
-              {/* Article Content */}
-              <Card className="bg-white shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                    <FileText className="w-5 h-5 text-green-600" />
-                    Article Content
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <FormEditor
-                    content={content}
-                    onUpdate={setContent}
-                    placeholder="Share your thoughts and insights..."
-                    minHeight={400}
-                    maxHeight={400}
-                  />
-                </CardContent>
-              </Card>
-
               {/* Author Information */}
               <Card className="bg-white shadow-sm">
                 <CardHeader className="pb-4">
@@ -254,6 +247,24 @@ export default function SubmitPage() {
                       Required for proper attribution
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+              {/* Article Content */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <FileText className="w-5 h-5 text-green-600" />
+                    Article Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FormEditor
+                    content={content}
+                    onUpdate={setContent}
+                    placeholder="Share your thoughts and insights..."
+                    minHeight={400}
+                    maxHeight={400}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -309,7 +320,8 @@ export default function SubmitPage() {
                                 {community.description || "No description"}
                               </span>
                               <span className="text-xs text-gray-400">
-                                {community.role} • {community.memberCount} members
+                                {community.role} • {community.memberCount}{" "}
+                                members
                               </span>
                             </div>
                           </SelectItem>
@@ -399,7 +411,7 @@ export default function SubmitPage() {
                           </>
                         )}
                       </Button>
-                      
+
                       <Button
                         type="button"
                         variant="outline"

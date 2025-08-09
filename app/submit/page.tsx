@@ -155,14 +155,14 @@ export default function SubmitPage() {
         </div>
 
         {/* Title Section */}
-        <div className="max-w-6xl mx-auto px-4 mb-8 text-center">
+        {/* <div className="max-w-6xl mx-auto px-4 mb-8 text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Submit Article
           </h1>
           <p className="text-gray-600">
             Share interesting content with your community
           </p>
-        </div>
+        </div> */}
 
         {/* Error Alert */}
         {communitiesError && (
@@ -188,7 +188,10 @@ export default function SubmitPage() {
                 <CardContent className="space-y-6">
                   <div>
                     <label className="text-sm font-medium text-gray-700 mb-2 block">
-                      Article Title *
+                      Article Title *{" "}
+                      <span className="text-sm text-gray-500 mt-1">
+                        {title.length}/100 characters
+                      </span>
                     </label>
                     <Input
                       type="text"
@@ -199,15 +202,53 @@ export default function SubmitPage() {
                       maxLength={100}
                       required
                     />
-                    <div className="text-sm text-gray-500 mt-1">
+                    {/* <div className="text-sm text-gray-500 mt-1">
                       {title.length}/100 characters
-                    </div>
+                    </div> */}
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Original Author *{" "}
+                      <span className="text-sm text-gray-500 mt-1">
+                        {originalAuthor.length}/100 characters
+                      </span>
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Enter original author name or organization..."
+                      value={originalAuthor}
+                      onChange={(e) => setOriginalAuthor(e.target.value)}
+                      maxLength={100}
+                      required
+                    />
+                    {/* <div className="text-sm text-gray-500 mt-1">
+                      {originalAuthor.length}/100 characters
+                    </div> */}
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Original Link *{" "}
+                      <span className="text-sm text-gray-500 mt-1">
+                        Required for proper attribution
+                      </span>
+                    </label>
+                    <Input
+                      type="url"
+                      placeholder="https://..."
+                      value={originalLink}
+                      onChange={(e) => setOriginalLink(e.target.value)}
+                      required
+                    />
+                    {/* <div className="text-sm text-gray-500 mt-1">
+                      Required for proper attribution
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Author Information */}
-              <Card className="bg-white shadow-sm">
+              {/* <Card className="bg-white shadow-sm">
                 <CardHeader className="pb-4">
                   <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                     <Users className="w-5 h-5 text-green-600" />
@@ -248,7 +289,7 @@ export default function SubmitPage() {
                     </div>
                   </div>
                 </CardContent>
-              </Card>
+              </Card> */}
               {/* Article Content */}
               <Card className="bg-white shadow-sm">
                 <CardHeader className="pb-4">

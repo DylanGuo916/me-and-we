@@ -6,6 +6,7 @@ import { JoinCommunityButton } from "@/components/join-community-button";
 import { VoteButtons } from "@/components/vote-buttons";
 import Image from "next/image";
 import { MessageCircle, Users, Calendar, ArrowLeft, Plus } from "lucide-react";
+import { extractTextSummarySSR } from "@/lib/text-utils";
 import Link from "next/link";
 
 interface CommunityMember {
@@ -207,7 +208,7 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
                                 {post.title}
                               </h3>
                               <p className="text-sm text-gray-600 line-clamp-2">
-                                {post.content}
+                                {extractTextSummarySSR(post.content, 120)}
                               </p>
                             </Link>
                             <div className="flex items-center justify-between mt-2 text-xs text-gray-500">

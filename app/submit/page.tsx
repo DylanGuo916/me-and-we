@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, FileText, Users, Hash, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,8 +15,10 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { useUserCommunities } from "@/hooks/use-user-communities";
 import { AppLayout } from "@/components/layouts/app-layout";
+import { FormEditor } from "@/components/tiptap-templates/form/form-editor";
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -130,254 +132,289 @@ export default function SubmitPage() {
   };
 
   return (
-    <AppLayout>
-      <div className="p-6">
+    <AppLayout showSidebar={false} showRightSidebar={false}>
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
         {/* Header */}
-        {/* <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.back()}
-              className="flex items-center space-x-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>Back</span>
-            </Button>
-            <h1 className="text-2xl font-bold">Submit Article</h1>
-          </div>
-        </div> */}
+        <div className="max-w-6xl mx-auto px-4 pt-6">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-gray-600 hover:text-green-600 mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Community
+          </Button>
+        </div>
 
-        <div className="space-y-6">
-          {/* Error Alert */}
-          {communitiesError && (
+        {/* Title Section */}
+        <div className="max-w-6xl mx-auto px-4 mb-8 text-center">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Submit Article</h1>
+          <p className="text-gray-600">Share interesting content with your community</p>
+        </div>
+
+        {/* Error Alert */}
+        {communitiesError && (
+          <div className="max-w-6xl mx-auto px-4 mb-6">
             <Alert variant="destructive">
               <AlertDescription>{communitiesError}</AlertDescription>
             </Alert>
-          )}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Community Selection */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Select Community</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {communitiesLoading ? (
-                  <div className="flex items-center space-x-2">
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span className="text-sm text-gray-500">
-                      Loading communities...
-                    </span>
-                  </div>
-                ) : communities.length === 0 ? (
-                  <div className="text-center py-4">
-                    <p className="text-gray-500 mb-2">
-                      You haven't joined any communities yet
-                    </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => router.push("/create")}
-                    >
-                      Create Community
-                    </Button>
-                  </div>
-                ) : (
-                  <Select
-                    value={selectedCommunity}
-                    onValueChange={setSelectedCommunity}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a community" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {communities.map((community) => (
-                        <SelectItem key={community.id} value={community.id}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">
-                              {community.name}
-                            </span>
-                            <span className="text-sm text-gray-500">
-                              {community.description || "No description"}
-                            </span>
-                            <span className="text-xs text-gray-400">
-                              {community.role} • {community.memberCount} members
-                              • {community.postCount} posts
-                            </span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Article Title */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Article Title</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  type="text"
-                  placeholder="Enter article title..."
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="text-lg"
-                  maxLength={100}
-                />
-                <div className="text-sm text-gray-500 mt-2">
-                  {title.length}/100 characters
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Original Author */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Original Author *</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  type="text"
-                  placeholder="Enter original author name or organization..."
-                  value={originalAuthor}
-                  onChange={(e) => setOriginalAuthor(e.target.value)}
-                  className="text-lg"
-                  maxLength={100}
-                  required
-                />
-                <div className="text-sm text-gray-500 mt-2">
-                  {originalAuthor.length}/100 characters
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Original Link */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Original Link *</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Input
-                  type="url"
-                  placeholder="Enter original article link..."
-                  value={originalLink}
-                  onChange={(e) => setOriginalLink(e.target.value)}
-                  className="text-lg"
-                  required
-                />
-                <div className="text-sm text-gray-500 mt-2">
-                  Required field for citing the original source
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Article Content */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Article Content</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Textarea
-                  placeholder="Share your thoughts..."
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  className="min-h-[300px] resize-none"
-                  maxLength={10000}
-                />
-                <div className="text-sm text-gray-500 mt-2">
-                  {content.length}/10000 characters
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Tags */}
-            <Card className="bg-white">
-              <CardHeader>
-                <CardTitle className="text-lg">Tags</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex space-x-2">
+        <form onSubmit={handleSubmit} className="max-w-6xl mx-auto px-4 pb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left Column - Main Content */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Basic Information */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <FileText className="w-5 h-5 text-green-600" />
+                    Basic Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Article Title *
+                    </label>
                     <Input
                       type="text"
-                      placeholder="Add tags..."
+                      placeholder="Enter a compelling title..."
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="text-lg h-12"
+                      maxLength={100}
+                      required
+                    />
+                    <div className="text-sm text-gray-500 mt-1">
+                      {title.length}/100 characters
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Article Content */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <FileText className="w-5 h-5 text-green-600" />
+                    Article Content
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <FormEditor
+                    content={content}
+                    onUpdate={setContent}
+                    placeholder="Share your thoughts and insights..."
+                    minHeight={400}
+                  />
+                </CardContent>
+              </Card>
+
+              {/* Author Information */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <Users className="w-5 h-5 text-green-600" />
+                    Source Information
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Original Author *
+                    </label>
+                    <Input
+                      type="text"
+                      placeholder="Enter original author name or organization..."
+                      value={originalAuthor}
+                      onChange={(e) => setOriginalAuthor(e.target.value)}
+                      maxLength={100}
+                      required
+                    />
+                    <div className="text-sm text-gray-500 mt-1">
+                      {originalAuthor.length}/100 characters
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-medium text-gray-700 mb-2 block">
+                      Original Link *
+                    </label>
+                    <Input
+                      type="url"
+                      placeholder="https://..."
+                      value={originalLink}
+                      onChange={(e) => setOriginalLink(e.target.value)}
+                      required
+                    />
+                    <div className="text-sm text-gray-500 mt-1">
+                      Required for proper attribution
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right Column - Sidebar */}
+            <div className="space-y-6">
+              {/* Community Selection */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <Building2 className="w-5 h-5 text-green-600" />
+                    Select Community
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {communitiesLoading ? (
+                    <div className="flex items-center gap-2 py-4">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span className="text-sm text-gray-500">
+                        Loading communities...
+                      </span>
+                    </div>
+                  ) : communities.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-gray-500 mb-3">
+                        You haven't joined any communities yet
+                      </p>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => router.push("/create")}
+                        className="w-full"
+                      >
+                        Create Community
+                      </Button>
+                    </div>
+                  ) : (
+                    <Select
+                      value={selectedCommunity}
+                      onValueChange={setSelectedCommunity}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose a community" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {communities.map((community) => (
+                          <SelectItem key={community.id} value={community.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {community.name}
+                              </span>
+                              <span className="text-sm text-gray-500">
+                                {community.description || "No description"}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {community.role} • {community.memberCount} members
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Tags */}
+              <Card className="bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+                    <Hash className="w-5 h-5 text-green-600" />
+                    Tags
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Add a tag..."
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) =>
                         e.key === "Enter" &&
                         (e.preventDefault(), handleAddTag())
                       }
+                      className="flex-1"
                     />
                     <Button
                       type="button"
                       variant="outline"
                       onClick={handleAddTag}
-                      className="flex items-center space-x-2"
+                      size="sm"
                     >
-                      <span>Add</span>
+                      Add
                     </Button>
                   </div>
 
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {tags.map((tag) => (
-                        <div
+                        <Badge
                           key={tag}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-sm flex items-center space-x-1 cursor-pointer hover:bg-gray-200"
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-gray-200"
                           onClick={() => handleRemoveTag(tag)}
                         >
-                          <span>#{tag}</span>
-                          <span className="text-gray-500">×</span>
-                        </div>
+                          #{tag}
+                          <span className="ml-1 text-gray-500">×</span>
+                        </Badge>
                       ))}
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
-            {/* Action Buttons */}
-            <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={
-                  isSubmitting ||
-                  !title.trim() ||
-                  !content.trim() ||
-                  !selectedCommunity ||
-                  !originalAuthor.trim() ||
-                  !originalLink.trim() ||
-                  communitiesLoading
-                }
-                className="bg-green-500 hover:bg-green-600 text-white flex items-center space-x-2"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    <span>Publishing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    <span>Publish</span>
-                  </>
-                )}
-              </Button>
+              {/* Action Buttons */}
+              <div className="sticky top-6">
+                <Card className="bg-white shadow-sm">
+                  <CardContent className="pt-6">
+                    <div className="space-y-3">
+                      <Button
+                        type="submit"
+                        disabled={
+                          isSubmitting ||
+                          !title.trim() ||
+                          !content.trim() ||
+                          !selectedCommunity ||
+                          !originalAuthor.trim() ||
+                          !originalLink.trim() ||
+                          communitiesLoading
+                        }
+                        className="w-full bg-green-600 hover:bg-green-700 text-white h-12"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Publishing...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Publish Article
+                          </>
+                        )}
+                      </Button>
+                      
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => router.back()}
+                        disabled={isSubmitting}
+                        className="w-full"
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </AppLayout>
   );

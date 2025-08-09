@@ -1,6 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { extractTextSummarySSR } from "@/lib/text-utils";
 import { Button } from "@/components/ui/button";
 import { AppLayout } from "@/components/layouts/app-layout";
 import { User, Settings, Bell, Shield, HelpCircle } from "lucide-react";
@@ -136,7 +137,7 @@ export default function ProfilePage() {
                             </h3>
                           </Link>
                           <p className="text-gray-600 text-sm mt-1">
-                            {post.content.length > 100 ? `${post.content.substring(0, 100)}...` : post.content}
+                            {extractTextSummarySSR(post.content, 100)}
                           </p>
                           <div className="flex items-center space-x-4 mt-2 text-sm text-gray-500">
                             <span>{formatDate(new Date(post.createdAt))}</span>

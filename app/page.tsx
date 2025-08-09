@@ -12,6 +12,7 @@ import { JoinCommunityButton } from "@/components/join-community-button";
 import { VoteButtons } from "@/components/vote-buttons";
 import Image from "next/image";
 import { MessageCircle, Gift } from "lucide-react";
+import { extractTextSummarySSR } from "@/lib/text-utils";
 import { SharePost } from "@/components/share-post";
 import Link from "next/link";
 
@@ -141,9 +142,7 @@ export default async function HomePage() {
                           </h2>
                         </Link>
                         <p className="text-gray-600 text-sm mb-4 break-words">
-                          {post.content.length > 150
-                            ? `${post.content.substring(0, 150)}...`
-                            : post.content}
+                          {extractTextSummarySSR(post.content, 150)}
                         </p>
 
                         {/* 交互功能按钮 */}

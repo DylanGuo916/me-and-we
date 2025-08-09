@@ -159,11 +159,21 @@ export default async function PostPage({ params }: PostPageProps) {
                   </div>
                 )}
 
-                <div className="prose max-w-none mb-6">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap break-words">
-                    {post.content}
-                  </p>
-                </div>
+                <div 
+                  className="prose prose-gray max-w-none mb-6 
+                    prose-headings:text-gray-900 
+                    prose-p:text-gray-700 prose-p:leading-relaxed
+                    prose-a:text-blue-600 prose-a:hover:text-blue-800
+                    prose-strong:text-gray-900 prose-strong:font-semibold
+                    prose-em:text-gray-700 prose-em:italic
+                    prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
+                    prose-code:bg-gray-100 prose-code:px-1 prose-code:rounded
+                    prose-pre:bg-gray-900 prose-pre:text-gray-100
+                    prose-img:rounded-lg prose-img:shadow-md
+                    prose-ul:list-disc prose-ol:list-decimal
+                    break-words"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
 
                 {/* 交互功能按钮 */}
                 <div className="flex items-center justify-between text-sm text-gray-500 border-t pt-4 flex-wrap gap-4">
